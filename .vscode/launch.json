@@ -1,0 +1,22 @@
+{
+    "configurations": [
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:HA-trmnl-vapor}",
+            "name": "Debug HaTrmnlVapor",
+            "program": "${workspaceFolder:HA-trmnl-vapor}/.build/debug/HaTrmnlVapor",
+            "preLaunchTask": "swift: Build Debug HaTrmnlVapor"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:HA-trmnl-vapor}",
+            "name": "Release HaTrmnlVapor",
+            "program": "${workspaceFolder:HA-trmnl-vapor}/.build/release/HaTrmnlVapor",
+            "preLaunchTask": "swift: Build Release HaTrmnlVapor"
+        }
+    ]
+}
