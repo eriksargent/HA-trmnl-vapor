@@ -5,39 +5,38 @@
 //  Created by Erik Sargent on 8/8/25.
 //
 
-import Foundation
 import Vapor
 
 
 enum HomeAssistant {
-	struct State: Codable {
+	struct State: Content {
 		var entityId: String
 		var state: String
 		var lastChanged: Date
 	}
-	
+
 	enum HAError: Error {
 		case invalidURL
 		case badType
 	}
-	
-	static func getStates() async throws -> [State] {
-		guard let baseUrl = Environment.get("HA_URL"), let url = URL(string: "\(baseUrl)/api/states") else { throw HAError.invalidURL }
-		
-		print(url)
-		var request = URLRequest(url: url)
-		request.setValue(Environment.get("HA_BEARER"), forHTTPHeaderField: "Authorization")
-		request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-		request.httpMethod = "GET"
-		print(request)
-		
-		let (data, _) = try await URLSession.shared.data(for: request)
-		
+
+	static func getStates(client: any Client) async throws -> [State] {
+		guard let baseUrl = Environment.get("HA_URL") else { throw HAError.invalidURL }
+		let uri = URI(string: "\(baseUrl)/api/states")
+
+		print(uri)
+		let headers = HTTPHeaders([
+			("Authorization", "\(Environment.get("HA_BEARER") ?? "")"),
+			("Content-Type", "application/json")
+		])
+		let response = try await client.get(uri, headers: headers)
+		print(response)
+
 		let decoder = JSONDecoder()
 		decoder.dateDecodingStrategy = .iso8601
 		decoder.keyDecodingStrategy = .convertFromSnakeCase
-		let states = try decoder.decode([State].self, from: data)
-		
+		let states = try response.content.decode([State].self, using: decoder)
+
 		return states
 	}
 }
@@ -48,19 +47,19 @@ extension HomeAssistant.State {
 		guard var value = Double(self.state) else {
 			throw HomeAssistant.HAError.badType
 		}
-		
+
 		if let scale {
 			value *= scale
 		}
-		
+
 		var formatted = String(format: "%.\(precision)f", value)
 		if let unit {
 			formatted += unit
 		}
-		
+
 		return formatted
 	}
-	
+
 	func capitalized() -> String {
 		return self.state.capitalized
 	}
