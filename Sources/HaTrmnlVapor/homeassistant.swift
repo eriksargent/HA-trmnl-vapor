@@ -12,7 +12,6 @@ enum HomeAssistant {
 	struct State: Content {
 		var entityId: String
 		var state: String
-		var lastChanged: Date
 	}
 
 	enum HAError: Error {

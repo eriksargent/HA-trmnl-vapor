@@ -58,7 +58,7 @@ jobs:
           RANCHER_BEARER_TOKEN: ${{ secrets.RANCHER_SECRET }}
           RANCHER_CLUSTER_ID: 'local'
           RANCHER_NAMESPACE: 'hadisplay'
-          RANCHER_PROJECT_ID: 'p-g4b8k'
+          RANCHER_PROJECT_ID: 'p-tb6hn'
           RANCHER_URL: ${{ vars.RANCHER_URL }}
           RANCHER_WORKLOADS: 'hadisplay'
           TLS_SKIP_VERIFICATION: 'false'
