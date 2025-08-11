@@ -7,8 +7,32 @@ This project's goals:
 
 ![trmnl interface](images/trmnl.jpeg)
 
+This trmnl display is generated from the json returned by this project which takes the form:
+
+```json
+{
+  "battery_percentage": "100%",
+  "battery_state": "Standby",
+  "inverter_output": "9.53kW",
+  "mainsfromgrid_energy_today": "3.36kWh",
+  "mainstogrid_energy_today": "17.06kWh",
+  "outdoor_humidity": "31%",
+  "outdoor_temperature": "86.0ºF",
+  "rain_last_hour": "0.000in",
+  "rain_today": "0.000in",
+  "total_solar_daily_yield": "46.73kWh",
+  "wind_gust_strength": "9.0mph",
+  "wind_speed": "4.0mph"
+}
+```
+
+
+
+### Usage
+
 If anyone else would like to use this project, consider this a template to fork the repo and customize for your setup. You could deploy this server directly, but none of my sensor values in HA will match anything that you have.
 
 The first thing to customize is the environment variables for Home Assistant. Those are HA_URL and HA_BEARER for the url to your HA server and a jwt auth token for API access to the server respectively. Locally, create a `.env` file to store those, for deployments I store them in a Secret on kubernetes.
 
 Next, customize the HA sensors, as well as the properties to export to your trmnl. Those are all in `Sources/HaTrmnlVapor/trmnl.swift`.
+
