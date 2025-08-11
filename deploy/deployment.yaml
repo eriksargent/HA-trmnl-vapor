@@ -1,0 +1,77 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hadisplay
+  labels:
+    app: hadisplay
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hadisplay
+  template:
+    metadata:
+      labels:
+        app: hadisplay
+    spec:
+      containers:
+        - name: hadisplay
+          image: ghcr.io/eriksargent/ha-trmnl-vapor:main
+          imagePullPolicy: Always
+          ports:
+          - containerPort: 8080
+          env:
+          - name: HA_URL
+            valueFrom:
+              secretKeyRef:
+                name: hadisplay-config
+                key: HA_URL
+          - name: HA_BEARER
+            valueFrom:
+              secretKeyRef:
+                name: hadisplay-config
+                key: HA_BEARER
+      imagePullSecrets:
+        - name: github-eriksargent
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hadisplay-service
+  labels:
+    app: hadisplay
+spec:
+  selector:
+    app: hadisplay
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  type: ClusterIP
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: hadisplay-ingress
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    app.kubernetes.io/name: hadisplay
+    app.kubernetes.io/component: hadisplay
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: hadisplay.succulent.online
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: hadisplay-service
+                port:
+                  number: 8080
+  tls:
+    - hosts:
+        - hadisplay.succulent.online
+      secretName: hadisplay-tls
