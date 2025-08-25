@@ -9,6 +9,12 @@ WORKDIR /staging
 # Copy entire repo into container
 COPY . .
 
+RUN ls -lah
+
+RUN ls -lah "$(swift build -c release --show-bin-path)/HaTrmnlVapor"
+
+RUN ls -lah .build
+
 # Copy main executable to staging area
 RUN cp "$(swift build -c release --show-bin-path)/HaTrmnlVapor" ./
 

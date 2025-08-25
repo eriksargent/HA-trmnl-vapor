@@ -40,3 +40,6 @@ jobs:
 
       - name: Run unit tests
         run: swift test --skip-build --enable-code-coverage --parallel
+        env:
+            HA_URL: ${{ secrets.ENV_HA_URL }}
+            HA_BEARER: ${{ secrets.ENV_HA_BEARER }}
