@@ -58,6 +58,18 @@ extension HomeAssistant.State {
 
 		return formatted
 	}
+	
+	func double(scale: Double? = nil) throws -> Double {
+		guard var value = Double(self.state) else {
+			throw HomeAssistant.HAError.badType
+		}
+
+		if let scale {
+			value *= scale
+		}
+
+		return value
+	}
 
 	func capitalized() -> String {
 		return self.state.capitalized

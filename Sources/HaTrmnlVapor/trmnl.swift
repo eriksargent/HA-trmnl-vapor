@@ -8,7 +8,12 @@
 import Vapor
 
 
-struct OverviewSlide: Content {
+protocol TrmnlContent: Content, Sendable {
+	static func makeFromStates(_ states: [HomeAssistant.State]) throws -> Self
+}
+
+
+struct OverviewSlide: TrmnlContent {
 	var mainstogridEnergyToday: String
 	var mainsfromgridEnergyToday: String
 	var inverterOutput: String
@@ -60,6 +65,43 @@ struct OverviewSlide: Content {
 			rainToday:
 				try states.entity(id: "sensor.weather_station_smart_rain_gauge_precipitation_today")?
 				.number(precision: 3, addUnit: "in") ?? ""
+		)
+	}
+}
+
+
+struct PowerSlide: TrmnlContent {
+	var currentInverterPower: Double
+	var maxInterverPower: Double
+	var batteryPercentage: Int
+	var batteryState: String
+	var totalSolarDailyYield: Double
+	var mainstogridEnergyToday: Double
+	var mainsfromgridEnergyToday: Double
+	
+	static func makeFromStates(_ states: [HomeAssistant.State]) throws -> PowerSlide {
+		Self.init(
+			currentInverterPower:
+				try states.entity(id: "sensor.total_inverter_grid_power")?
+				.double(scale: 1.0 / 1000) ?? 0,
+			maxInterverPower:
+				try states.entity(id: "sensor.total_inverter_grid_power_daily_max")?
+				.double(scale: 1.0 / 1000) ?? 0,
+			batteryPercentage:
+				Int(try states.entity(id: "sensor.sonnenbatterie_156865_state_battery_percentage_user")?
+					.double() ?? 0),
+			batteryState:
+				states.entity(id: "sensor.sonnenbatterie_156865_state_sonnenbatterie")?
+				.capitalized() ?? "",
+			totalSolarDailyYield:
+				try states.entity(id: "sensor.total_solar_daily_yield")?
+				.double(scale: 1.0 / 1000) ?? 0,
+			mainstogridEnergyToday:
+				try states.entity(id: "sensor.mainstogrid_energy_today")?
+				.double() ?? 0,
+			mainsfromgridEnergyToday:
+				try states.entity(id: "sensor.mainsfromgrid_energy_today")?
+				.double() ?? 0,
 		)
 	}
 }
