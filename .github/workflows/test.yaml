@@ -47,6 +47,7 @@ jobs:
       - name: Prepare Code Coverage
         run: |
           apt-get install -y llvm
+          ls -lah .build/debug/HaTrmnlVaporPackageTests.xctest/Contents/
           llvm-cov export -format="lcov" .build/debug/HaTrmnlVaporPackageTests.xctest/Contents/MacOS/HaTrmnlVaporPackageTests  -instr-profile .build/debug/codecov/default.profdata > info.lcov
 
       - name: Upload coverage reports to Codecov
