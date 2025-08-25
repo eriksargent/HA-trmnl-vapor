@@ -26,6 +26,40 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Install dependencies
+        # zstd - Makes caching SPM builds DRAMATICALLY faster
+        # libjemalloc-dev - Improves memory allocation performance in vapor
+        run: |
+          apt-get update -y
+          apt-get install -y zstd
+          apt-get install -y libjemalloc-dev
+
+      - name: Restore .build
+        id: "restore-build"
+        uses: actions/cache/restore@v4
+        with:
+          path: .build
+          key: "swiftpm-deploy-build-${{ runner.os }}-${{ github.event.pull_request.base.sha || github.event.after }}"
+          restore-keys: "swiftpm-deploy-build-${{ runner.os }}-"
+
+      - name: Build App
+        run: |
+          # Build the application, with optimizations, with static linking, and using jemalloc
+          swift build \
+            -c release \
+            --product HaTrmnlVapor \
+            --static-swift-stdlib \
+            -Xlinker -ljemalloc \
+            $([ -f ./Package.resolved ] && echo "--force-resolved-versions" || true)
+
+      - name: Cache .build
+        if: steps.restore-build.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: .build
+          key: "swiftpm-deploy-build-${{ runner.os }}-${{ github.event.pull_request.base.sha || github.event.after }}"
+
+
       - name: Install Docker
         run: |
           set -eu
@@ -62,40 +96,6 @@ jobs:
         uses: docker/metadata-action@c1e51972afc2121e065aed6d45c65596fe445f3f
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-
-      - name: Install dependencies
-        # zstd - Makes caching SPM builds DRAMATICALLY faster
-        # libjemalloc-dev - Improves memory allocation performance in vapor
-        run: |
-          apt-get update -y
-          apt-get install -y zstd
-          apt-get install -y libjemalloc-dev
-
-      - name: Restore .build
-        id: "restore-build"
-        uses: actions/cache/restore@v4
-        with:
-          path: .build
-          key: "swiftpm-deploy-build-${{ runner.os }}-${{ github.event.pull_request.base.sha || github.event.after }}"
-          restore-keys: "swiftpm-deploy-build-${{ runner.os }}-"
-
-      - name: Build App
-        run: |
-          # Build the application, with optimizations, with static linking, and using jemalloc
-          swift build \
-            -c release \
-            --product HaTrmnlVapor \
-            --static-swift-stdlib \
-            -Xlinker -ljemalloc \
-            $([ -f ./Package.resolved ] && echo "--force-resolved-versions" || true)
-
-      - name: Cache .build
-        if: steps.restore-build.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v4
-        with:
-          path: .build
-          key: "swiftpm-deploy-build-${{ runner.os }}-${{ github.event.pull_request.base.sha || github.event.after }}"
-
       - name: Build and push Docker image
         id: push
         uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83
