@@ -26,11 +26,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install zstd
-        # Makes caching SPM builds DRAMATICALLY faster
+      - name: Install dependencies
+        # zstd - Makes caching SPM builds DRAMATICALLY faster
+        # libjemalloc-dev - Improves memory allocation performance in vapor
         run: |
           apt-get update -y
           apt-get install -y zstd
+          apt-get install -y libjemalloc-dev
 
       - name: Restore .build
         id: "restore-build"
@@ -42,13 +44,10 @@ jobs:
 
       - name: Build App
         run: |
-          apt-get update -y
-          apt-get install -y libjemalloc-dev
-
           # Build the application, with optimizations, with static linking, and using jemalloc
           swift build \
             -c release \
-            --product App \
+            --product HaTrmnlVapor \
             --static-swift-stdlib \
             -Xlinker -ljemalloc \
             $([ -f ./Package.resolved ] && echo "--force-resolved-versions" || true)
