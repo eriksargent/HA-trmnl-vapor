@@ -15,6 +15,7 @@ jobs:
         run: |
           apt-get update -y
           apt-get install -y zstd
+          apt-get install -y curl
 
       - name: Restore .build
         id: "restore-build"
@@ -48,4 +49,3 @@ jobs:
         uses: codecov/codecov-action@v5
         with:
             token: ${{ secrets.CODECOV_TOKEN }}
-            files: info.lcov
