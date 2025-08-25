@@ -44,16 +44,6 @@ jobs:
             HA_URL: ${{ secrets.ENV_HA_URL }}
             HA_BEARER: ${{ secrets.ENV_HA_BEARER }}
 
-      - name: Prepare Code Coverage
-        run: |
-          set -x
-          apt-get install -y llvm
-          ls -lah .build/
-          ls -lah .build/debug/
-          ls -lah .build/debug/HaTrmnlVaporPackageTests.xctest/
-          ls -lah .build/debug/HaTrmnlVaporPackageTests.xctest/Contents/
-          llvm-cov export -format="lcov" .build/debug/HaTrmnlVaporPackageTests.xctest/Contents/MacOS/HaTrmnlVaporPackageTests  -instr-profile .build/debug/codecov/default.profdata > info.lcov
-
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v5
         with:
