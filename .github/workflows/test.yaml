@@ -43,3 +43,12 @@ jobs:
         env:
             HA_URL: ${{ secrets.ENV_HA_URL }}
             HA_BEARER: ${{ secrets.ENV_HA_BEARER }}
+
+      - name: Prepare Code Coverage
+        run: xcrun llvm-cov export -format="lcov" .build/debug/HaTrmnlVaporPackageTests.xctest/Contents/MacOS/HaTrmnlVaporPackageTests  -instr-profile .build/debug/codecov/default.profdata > info.lcov
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+            token: ${{ secrets.CODECOV_TOKEN }}
+            files: info.lcov
