@@ -15,6 +15,7 @@ jobs:
         run: |
           apt-get update -y
           apt-get install -y zstd
+          apt-get install -y llvm
 
       - name: Restore .build
         id: "restore-build"
@@ -45,7 +46,7 @@ jobs:
             HA_BEARER: ${{ secrets.ENV_HA_BEARER }}
 
       - name: Prepare Code Coverage
-        run: xcrun llvm-cov export -format="lcov" .build/debug/HaTrmnlVaporPackageTests.xctest/Contents/MacOS/HaTrmnlVaporPackageTests  -instr-profile .build/debug/codecov/default.profdata > info.lcov
+        run: llvm-cov export -format="lcov" .build/debug/HaTrmnlVaporPackageTests.xctest/Contents/MacOS/HaTrmnlVaporPackageTests  -instr-profile .build/debug/codecov/default.profdata > info.lcov
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v5
