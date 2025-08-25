@@ -15,7 +15,7 @@ jobs:
   build-and-push-image:
     if: ${{ github.triggering_actor != 'dependabot[bot]' }}
     runs-on: ubuntu-latest
-    container: swift:6.0-noble
+    container: swift:6.1-noble
     permissions:
       contents: read
       packages: write
