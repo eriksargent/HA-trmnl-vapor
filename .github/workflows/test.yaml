@@ -11,11 +11,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install dependencies
+      - name: Install zstd
         run: |
           apt-get update -y
           apt-get install -y zstd
-          apt-get install -y llvm-8
 
       - name: Restore .build
         id: "restore-build"
@@ -46,7 +45,9 @@ jobs:
             HA_BEARER: ${{ secrets.ENV_HA_BEARER }}
 
       - name: Prepare Code Coverage
-        run: llvm-cov export -format="lcov" .build/debug/HaTrmnlVaporPackageTests.xctest/Contents/MacOS/HaTrmnlVaporPackageTests  -instr-profile .build/debug/codecov/default.profdata > info.lcov
+        run: |
+          apt-get install -y llvm
+          llvm-cov export -format="lcov" .build/debug/HaTrmnlVaporPackageTests.xctest/Contents/MacOS/HaTrmnlVaporPackageTests  -instr-profile .build/debug/codecov/default.profdata > info.lcov
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v5
