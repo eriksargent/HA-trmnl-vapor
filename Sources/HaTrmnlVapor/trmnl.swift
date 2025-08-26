@@ -76,11 +76,19 @@ struct PowerSlide: TrmnlContent {
 	var batteryPercentage: Int
 	var batteryState: String
 	var totalSolarDailyYield: Double
-	var mainstogridEnergyToday: Double
-	var mainsfromgridEnergyToday: Double
+	var homeToGridEnergyToday: Double
+	var leftSolarEnergyToday: Double
+	var rightSolarEnergyToday: Double
+	var gridToBatteryEnergyToday: Double
+	var gridToHomeEnergyToday: Double
+	var batteryToHomeEnergyToday: Double
 	
 	static func makeFromStates(_ states: [HomeAssistant.State]) throws -> PowerSlide {
-		Self.init(
+		let totalGridIn = try states.entity(id: "sensor.mainsfromgrid_energy_today")?.double() ?? 0
+		let batteryGridIn = try states.entity(id: "sensor.battery_grid_in_energy_today")?.double() ?? 0
+		let homeGridIn = max(totalGridIn - batteryGridIn, 0)
+		
+		return Self.init(
 			currentInverterPower:
 				try states.entity(id: "sensor.total_inverter_grid_power")?
 				.double(scale: 1.0 / 1000) ?? 0,
@@ -96,12 +104,19 @@ struct PowerSlide: TrmnlContent {
 			totalSolarDailyYield:
 				try states.entity(id: "sensor.total_solar_daily_yield")?
 				.double(scale: 1.0 / 1000) ?? 0,
-			mainstogridEnergyToday:
+			homeToGridEnergyToday:
 				try states.entity(id: "sensor.mainstogrid_energy_today")?
 				.double() ?? 0,
-			mainsfromgridEnergyToday:
-				try states.entity(id: "sensor.mainsfromgrid_energy_today")?
-				.double() ?? 0,
+			leftSolarEnergyToday:
+				try states.entity(id: "sensor.left_battery_inverter_daily_yield")?
+				.double(scale: 1.0 / 1000) ?? 0,
+			rightSolarEnergyToday:
+				try states.entity(id: "sensor.right_inverter_daily_yield")?
+				.double(scale: 1.0 / 1000) ?? 0,
+			gridToBatteryEnergyToday: batteryGridIn,
+			gridToHomeEnergyToday: homeGridIn,
+			batteryToHomeEnergyToday: try states.entity(id: "sensor.battery_microgrid_energy_today")?
+				.double(scale: 1.0 / 1000) ?? 0
 		)
 	}
 }
