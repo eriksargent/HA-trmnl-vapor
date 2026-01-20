@@ -19,7 +19,7 @@ jobs:
 
       - name: Restore .build
         id: "restore-build"
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         with:
           path: .build
           key: "swiftpm-tests-build-${{ runner.os }}-${{ github.event.pull_request.base.sha || github.event.after }}"
@@ -33,7 +33,7 @@ jobs:
 
       - name: Cache .build
         if: steps.restore-build.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v5
         with:
           path: .build
           key: "swiftpm-tests-build-${{ runner.os }}-${{ github.event.pull_request.base.sha || github.event.after }}"
