@@ -2,7 +2,7 @@
 # ================================
 # Build image
 # ================================
-FROM swift:6.2-noble AS build
+FROM swift:6.3-noble AS build
 
 WORKDIR /staging
 
