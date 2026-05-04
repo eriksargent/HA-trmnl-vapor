@@ -1,5 +1,5 @@
 {
-  "originHash" : "5b5ed2f27e23cfce65779cbe78ffa911481a758fcf6075691c238de9603317e9",
+  "originHash" : "a62db251a47d867072715e72d8105aa54a9ef1e9555df516a64993333b0ac739",
   "pins" : [
     {
       "identity" : "async-http-client",
@@ -159,8 +159,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-nio.git",
       "state" : {
-        "revision" : "558f24a4647193b5a0e2104031b71c55d31ff83a",
-        "version" : "2.97.1"
+        "revision" : "f71c8d2a5e74a2c6d11a0fbe324774b5d6084237",
+        "version" : "2.99.0"
       }
     },
     {
@@ -240,8 +240,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/vapor/vapor.git",
       "state" : {
-        "revision" : "a8db2dbda8b3cdc8a61bd35128590bd296e85563",
-        "version" : "4.121.3"
+        "revision" : "cfd8f434843ac7850e2d97f46c1aa5ddb906cf1c",
+        "version" : "4.121.4"
       }
     },
     {
