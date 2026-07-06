@@ -9,7 +9,7 @@ jobs:
     container: swift:6.1-noble
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Install zstd
         run: |
@@ -19,7 +19,7 @@ jobs:
 
       - name: Restore .build
         id: "restore-build"
-        uses: actions/cache/restore@v5
+        uses: actions/cache/restore@v6
         with:
           path: .build
           key: "swiftpm-tests-build-${{ runner.os }}-${{ github.event.pull_request.base.sha || github.event.after }}"
@@ -33,7 +33,7 @@ jobs:
 
       - name: Cache .build
         if: steps.restore-build.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v5
+        uses: actions/cache/save@v6
         with:
           path: .build
           key: "swiftpm-tests-build-${{ runner.os }}-${{ github.event.pull_request.base.sha || github.event.after }}"
@@ -46,6 +46,6 @@ jobs:
             HA_BEARER: ${{ secrets.ENV_HA_BEARER }}
 
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v6
+        uses: codecov/codecov-action@v7
         with:
             token: ${{ secrets.CODECOV_TOKEN }}
