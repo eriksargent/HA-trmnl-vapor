@@ -15,7 +15,7 @@ jobs:
   build-and-push-image:
     if: ${{ github.triggering_actor != 'dependabot[bot]' }}
     runs-on: ubuntu-latest
-    container: swift:6.1-noble
+    container: swift:6.4-noble
     permissions:
       contents: read
       packages: write
@@ -39,13 +39,14 @@ jobs:
         uses: actions/cache/restore@v6
         with:
           path: .build
-          key: "swiftpm-deploy-build-${{ runner.os }}-${{ github.event.pull_request.base.sha || github.event.after }}"
-          restore-keys: "swiftpm-deploy-build-${{ runner.os }}-"
+          key: "swiftpm-deploy-build-6.4-native-${{ runner.os }}-${{ github.event.pull_request.base.sha || github.event.after }}"
+          restore-keys: "swiftpm-deploy-build-6.4-native-${{ runner.os }}-"
 
       - name: Build App
         run: |
           # Build the application, with optimizations, with static linking, and using jemalloc
           swift build \
+            --build-system native \
             -c release \
             --product HaTrmnlVapor \
             --static-swift-stdlib \
@@ -57,7 +58,7 @@ jobs:
         uses: actions/cache/save@v6
         with:
           path: .build
-          key: "swiftpm-deploy-build-${{ runner.os }}-${{ github.event.pull_request.base.sha || github.event.after }}"
+          key: "swiftpm-deploy-build-6.4-native-${{ runner.os }}-${{ github.event.pull_request.base.sha || github.event.after }}"
 
 
       - name: Install Docker

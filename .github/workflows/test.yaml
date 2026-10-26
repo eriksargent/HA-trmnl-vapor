@@ -6,7 +6,7 @@ on:
 jobs:
   unit-tests:
     runs-on: ubuntu-latest
-    container: swift:6.1-noble
+    container: swift:6.4-noble
     steps:
       - name: Checkout code
         uses: actions/checkout@v7
@@ -22,11 +22,11 @@ jobs:
         uses: actions/cache/restore@v6
         with:
           path: .build
-          key: "swiftpm-tests-build-${{ runner.os }}-${{ github.event.pull_request.base.sha || github.event.after }}"
-          restore-keys: "swiftpm-tests-build-${{ runner.os }}-"
+          key: "swiftpm-tests-build-6.4-native-${{ runner.os }}-${{ github.event.pull_request.base.sha || github.event.after }}"
+          restore-keys: "swiftpm-tests-build-6.4-native-${{ runner.os }}-"
 
       - name: Build package
-        run: swift build --build-tests --enable-code-coverage
+        run: swift build --build-system native --build-tests --enable-code-coverage
         env:
             HA_URL: ${{ secrets.ENV_HA_URL }}
             HA_BEARER: ${{ secrets.ENV_HA_BEARER }}
@@ -36,11 +36,11 @@ jobs:
         uses: actions/cache/save@v6
         with:
           path: .build
-          key: "swiftpm-tests-build-${{ runner.os }}-${{ github.event.pull_request.base.sha || github.event.after }}"
+          key: "swiftpm-tests-build-6.4-native-${{ runner.os }}-${{ github.event.pull_request.base.sha || github.event.after }}"
 
 
       - name: Run unit tests
-        run: swift test --skip-build --enable-code-coverage --parallel --disable-xctest
+        run: swift test --build-system native --skip-build --enable-code-coverage --parallel --disable-xctest
         env:
             HA_URL: ${{ secrets.ENV_HA_URL }}
             HA_BEARER: ${{ secrets.ENV_HA_BEARER }}
