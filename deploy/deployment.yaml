@@ -55,7 +55,6 @@ metadata:
   name: hadisplay-ingress
   annotations:
     kubernetes.io/ingress.class: nginx
-    cert-manager.io/cluster-issuer: "letsencrypt-prod"
     app.kubernetes.io/name: hadisplay
     app.kubernetes.io/component: hadisplay
 spec:
@@ -74,4 +73,4 @@ spec:
   tls:
     - hosts:
         - hadisplay.succulent.online
-      secretName: hadisplay-tls
+      secretName: hadisplay-tls2
